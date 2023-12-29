@@ -45,7 +45,6 @@ int main() {
     if (!isPrime(a)) {
       continue;
     }
-    // cout << "a: " << a << endl;
     for (int b = 3; b < a; b += 2) {
       if (!isPrime(b) || !prop({a, b})) {
         continue;
