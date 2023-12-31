@@ -1,0 +1,4 @@
+(executable
+ (public_name problem_66)
+ (name main)
+ (libraries problem_66 zarith))
