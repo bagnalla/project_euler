@@ -11,6 +11,8 @@
     increasing order and look for the first pair [xₙ, yₙ] that
     satisfies [xₙ² - Dyₙ² = 1]. *)
 
+open Z
+
 type 'a stream =
   | SCons of 'a * (unit -> 'a stream)
 
@@ -31,13 +33,15 @@ let is_square (n : Z.t) : bool =
 
 let rec zeros () : Z.t stream = scons Z.zero zeros
 
-let sqrt_continued_fraction_digits (n : Z.t) : Z.t stream =
-  if is_square n then zeros () else
+(* Generate the sequence of integers in the continued fraction
+   representation of [n].*)
+let sqrt_continued_fraction (n : Z.t) : Z.t stream =
+  if is_square n then scons (Z.sqrt n) zeros else
     let a0 = Z.sqrt n in
     let rec go _ r s : (Z.t * Z.t * Z.t) stream =
-      let a' = Z.div (Z.add r a0) s in
-      let r' = Z.sub (Z.mul a' s) r in
-      let s' = Z.div (Z.sub n (Z.mul r' r')) s in
+      let a' = (r + a0) / s in
+      let r' = a' * s - r in
+      let s' = (n - r' * r') / s in
       scons (a', r', s') (fun _ -> go a' r' s')
     in
     map (fun (x, _, _) -> x) (go a0 Z.zero Z.one)
@@ -48,17 +52,17 @@ let rec partial_fraction (n : int) (digits : Z.t stream) : Q.t =
     Q.make (first digits) Z.one
   else
     Q.add (Q.make (first digits) Z.one)
-      (Q.div Q.one @@ partial_fraction (n-1) (rest digits))
+      (Q.div Q.one @@ partial_fraction (Int.pred n) (rest digits))
 
 (* Find minimal solution for x and y of equation [x^2 - d * y^2 = 1]. *)
 let find_solution (d : Z.t) : Z.t * Z.t =
   let rec go n =
-    let x_over_y = partial_fraction n (sqrt_continued_fraction_digits d) in
+    let x_over_y = partial_fraction n (sqrt_continued_fraction d) in
     let x, y = Q.num x_over_y, Q.den x_over_y in
-    if Z.sub (Z.mul x x) (Z.mul d (Z.mul y y)) == Z.one then
+    if x * x - d * y * y == Z.one then
       x, y
     else
-      go (n+1)
+      go (Int.succ n)
   in go 0
 
 let () =
@@ -68,7 +72,7 @@ let () =
     let dz = Z.of_int d in
     if not (is_square dz) then
       let x, y = find_solution dz in
-      if Z.geq x !max_x then
+      if x >= !max_x then
         (max_x := x;
          max_y := y;
          max_d := dz)
