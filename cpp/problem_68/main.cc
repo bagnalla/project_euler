@@ -9,10 +9,10 @@
 #include <vector>
 using namespace std;
 
-constexpr uint N = 22;
+constexpr uint N = 10;
 
 template <typename T>
-inline vector<T> concat(vector<T> a, const vector<T>& b) {
+constexpr vector<T> concat(vector<T> a, const vector<T>& b) {
   a.insert(a.end(), b.cbegin(), b.cend());
   return a;
 }
