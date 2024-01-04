@@ -54,7 +54,7 @@ vector<vector<uint>> solve(uint target_sum,
         }
       } else {
         auto sols = solve(target_sum, first_i, first_j, k, bits);
-        for (vector<uint>& sol : sols) {
+        for (auto& sol : sols) {
           sol.insert(sol.begin(), k);
           sol.insert(sol.begin(), j);
           sol.insert(sol.begin(), i);
@@ -86,7 +86,7 @@ int main() {
             auto target_sum = i + j + k;
             bits[k-1] = false;
             auto sols = solve(target_sum, i, j, k, bits);
-            for (vector<uint>& sol : sols) {
+            for (auto& sol : sols) {
               sol.insert(sol.begin(), k);
               sol.insert(sol.begin(), j);
               sol.insert(sol.begin(), i);
