@@ -27,15 +27,15 @@ constexpr bool divides(int d, int k) {
 }
 
 constexpr bool isPrime(uint n) {
-  if (n == 2) {
-    return true;
+  if (n % 2 == 0) {
+    return n == 2;
   }
   for (uint i = 3; i*i <= n; i += 2) {
     if (n % i == 0) {
       return false;
     }
   }
-  return true;
+  return n > 1;
 }
 
 static vector<uint> primes;
@@ -64,8 +64,7 @@ uint phi(uint n) {
   double result = n;
   for (const auto p : prime_factors[n]) {
     result *= 1 - 1.0 / p;
-  }
-  
+  }  
   return result;
 }
 
