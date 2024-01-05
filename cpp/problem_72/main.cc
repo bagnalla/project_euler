@@ -21,7 +21,6 @@
 
 #include <cmath>
 #include <iostream>
-#include <set>
 #include <vector>
 using namespace std;
 
@@ -74,13 +73,13 @@ void init_primes() {
   }
 }
 
-static vector<set<uint>> prime_factors(N, set<uint>{});
+static vector<vector<uint>> prime_factors(N, vector<uint>{});
 
 // This could probably be optimized but it's good enough as is.
 void init_prime_factors() {
   for (uint i = 0; i < primes.size(); i++) {
     for (uint j = 0; j * primes[i] < N; j++) {
-      prime_factors[j*primes[i]].insert(primes[i]);
+      prime_factors[j*primes[i]].push_back(primes[i]);
     }
   }
 }
