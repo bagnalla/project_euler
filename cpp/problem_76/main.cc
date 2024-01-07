@@ -1,6 +1,7 @@
 // Relatively straightforward brute force recursive
 // algorithm. Computes the answer in under 6 seconds in my Linux VM.
 
+#include <cmath>
 #include <functional>
 #include <iostream>
 #include <set>
@@ -43,10 +44,54 @@ uint g(uint n) {
   return go(n, n);
 }
 
+// The three functions below implement a faster algorithm based on the
+// recurrence relation described here:
+// https://en.wikipedia.org/wiki/Pentagonal_number_theorem.
+constexpr ulong penta(int n) {
+  return (3 * n*n - n) / 2;
+}
+
+constexpr int alternating(uint n) {
+  return pow(-1, n+1) * ((n+1) / 2);
+}
+
+// Memoized partition function.
+ulong p(uint n) {
+  if (n == 0) {
+    return 1;
+  }
+  if (n < 0) {
+    return 0;
+  }
+
+  static unordered_map<uint, ulong> cache;
+  if (cache.contains(n)) {
+    return cache[n];
+  }
+  
+  uint i = 1;
+  int k = alternating(i);
+  ulong g_k = penta(k);
+  ulong sum = 0;
+  while (n >= g_k) {
+    sum += pow(-1, k-1) * p(n - g_k);
+    k = alternating(++i);
+    g_k = penta(k);
+  }
+  
+  cache[n] = sum;
+  return sum;
+}
+
 int main() {
   // auto vs = f(90);
   // cout << vs.size()-1 << endl;
 
-  auto sum = g(100);
-  cout << sum-1 << endl;
+  // auto sum = g(100);
+  // cout << sum-1 << endl;
+
+  // for (uint i = 0; i < 100; i++) {
+  //   cout << p(i) << endl;
+  // }
+  cout << p(100)-1 << endl;
 }
