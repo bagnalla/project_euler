@@ -8,21 +8,11 @@ open Z (* For Z infix operators. *)
 type 'a stream =
   | SCons of 'a * (unit -> 'a stream)
 
-let first : 'a stream -> 'a = function
-  | SCons (x, _) -> x
-
 let rest : 'a stream -> 'a stream = function
   | SCons (_, s) -> s ()
 
 let scons (x : 'a) (k : unit -> 'a stream) : 'a stream =
   SCons (x, k)
-
-let rec map (f : 'a -> 'b) : 'a stream -> 'b stream = function
-  | SCons (x, s) -> SCons (f x, fun _ -> map f (s ()))
-
-let rec take (n : int) (s : 'a stream) : 'a list =
-  if n <= 0 then [] else match s with
-                         | SCons (x, k) -> x :: take (Int.sub n 1) (k ())
 
 let rec take_while (f : 'a -> bool) : 'a stream -> 'a list = function
   | SCons (x, k) -> if f x
@@ -71,9 +61,10 @@ let rec p (n : Z.t) : Z.t =
 
 let search () : Z.t =
   let rec go (n : Z.t) : Z.t =
-    if p n mod ~$1000000 = Z.zero then n else go (Z.succ n)
+    if divisible (p n) ~$1000000 then n else go (Z.succ n)
   in
   go Z.zero
 
 let () =
-  print_endline @@ Z.to_string @@ search ()
+  let n = search () in
+  print_endline @@ "p(" ^ Z.to_string n ^ ") = " ^ Z.to_string (p n)
