@@ -5,6 +5,15 @@
 // i.i.d. random draws with replacement but it does run a bit faster
 // and consumes less entropy.
 
+// Alvaro describes a really nice solution: "I computed a matrix
+// M[j][k] with the probability of going from state j to state
+// k. There are 120 states (40 squares x 3 "number of doubles"
+// values). The eigenvector of the largest eigenvalue, normalized to
+// add up to 1, gives you the probability of each state. To compute
+// that, start with (1,1,1,...,1), multiply by M, normalize, rinse,
+// repeat. This method converges quickly to very precise values of the
+// probabilities."
+
 #include <chrono>
 #include <iostream>
 #include <random>
