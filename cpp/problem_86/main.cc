@@ -14,8 +14,6 @@
 #include <iostream>
 using namespace std;
 
-constexpr uint M = 100;
-
 bool is_square(uint n) {
   double root = sqrt(n);
   return floor(root) == root;
