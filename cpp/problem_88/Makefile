@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 default:
-	time g++ -std=c++2a -O3 main.cc
+	time g++ -std=c++2a -O3 -fopenmp main.cc
 
 debug:
 	time g++ -std=c++2a -g main.cc

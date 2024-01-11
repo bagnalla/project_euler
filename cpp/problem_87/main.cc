@@ -22,8 +22,8 @@ constexpr bool isPrime(uint n) {
 
 vector<uint> primes;
 
-// Compute and store all primes p such that p² + 2³ + 2⁴ < N. Any
-// prime beyond that is bigger than what we need to check.
+// Compute and store all primes p where p² + 2³ + 2⁴ < N. Any prime
+// beyond that is bigger than what we need to check.
 void init_primes() {
   primes.push_back(2);
   for (uint p = 3; p*p + 24 < N; p += 2) {
@@ -43,15 +43,18 @@ int main() {
     uint square = pow(primes[i], 2);
     for (uint j = 0;; j++) {
       uint cube = pow(primes[j], 3);
+      // Move to next i when j is large enough that [i² + j³ + 2⁴ ≥ N].
       if (square + cube + 16 >= N) {
         break;
       }
       for (uint k = 0;; k++) {
 	uint fourth_power = pow(primes[k], 4);
         uint sum = square + cube + fourth_power;
+	// Move to next j when k is large enough that [i² + j³ + k⁴ ≥ N].
 	if (sum >= N) {
 	  break;
 	}
+	// Only count sums we haven't seen before.
         if (!seen.contains(sum)) {
           count++;
           seen.insert(sum);
