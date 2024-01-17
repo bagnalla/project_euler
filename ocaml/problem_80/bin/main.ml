@@ -38,7 +38,8 @@ let sqrt_digits (n : Z.t) : string =
   let digits = ref "" in
   let i = ref 0 in
   let p = ref Z.zero in
-  while (!rem <> Z.zero || !i < List.length n_pairs) && String.length !digits < num_digits do
+  while (!rem <> Z.zero || !i < List.length n_pairs) &&
+          String.length !digits < num_digits do
     let c = !rem * ~$100 + (if !i < List.length n_pairs
                             then Z.of_string (List.nth n_pairs !i)
                             else Z.zero) in

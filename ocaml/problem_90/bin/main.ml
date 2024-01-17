@@ -13,7 +13,7 @@ let rec choose (k : int) (s : ('a, 'comp) Set.t) : (('a, 'comp) Set.t) list =
           acc @ List.map ~f:(fun s -> Set.add s x)
                   ((choose (k-1) (Set.filter s ~f:(fun y -> y > x)))))
 
-let to_string : IntSet.t -> string = Fn.compose Sexp.to_string IntSet.sexp_of_t
+(* let to_string : IntSet.t -> string = Fn.compose Sexp.to_string IntSet.sexp_of_t *)
 
 let cartesian l l' = 
   List.concat (List.map ~f:(fun e -> List.map ~f:(fun e' -> (e,e')) l') l)
@@ -29,9 +29,9 @@ let contains_squares (a : IntSet.t) (b : IntSet.t) : bool =
 let () =
   let l = choose 6 (IntSet.of_list [0; 1; 2; 3; 4; 5; 6; 7; 8; 9]) in
 
-  (** Imperative version that should probably be a bit faster since it
-      avoids double counting. The solution below double counts and
-      then divides by two.*)
+  (* Imperative version that should probably be a bit faster since it
+     avoids double counting. The solution below double counts and
+     then divides by two.*)
   (* let count = ref 0 in *)
   (* for i = 0 to List.length l - 1 do *)
   (*   for j = i to List.length l - 1 do *)
