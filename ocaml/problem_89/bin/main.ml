@@ -1,5 +1,6 @@
 (** Bit of a pea-brain solution but it works and is easy to
-    understand. *)
+    understand. Obviously could generalize the functions below but
+    there's no need. *)
 
 open Core
 
