@@ -7,7 +7,7 @@ open Core
 module IntSet = Core.Set.Make(Int)
 
 let rec choose (k : int) (s : ('a, 'comp) Set.t) : (('a, 'comp) Set.t) list =
-  if k <= 0 then [IntSet.empty] else
+  if k <= 0 then [Set.empty (Set.comparator_s s)] else
     if Set.is_empty s then [] else
       Set.fold s ~init:[] ~f:(fun acc x ->
           acc @ List.map ~f:(fun s -> Set.add s x)

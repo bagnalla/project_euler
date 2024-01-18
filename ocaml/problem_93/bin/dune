@@ -1,0 +1,5 @@
+(executable
+ (public_name problem_93)
+ (name main)
+ (libraries problem_93 core)
+ (preprocess (pps ppx_sexp_conv)))
