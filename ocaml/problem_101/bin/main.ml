@@ -38,6 +38,8 @@
     
     Reminder: [M * x = y <-> x = M^-1 * y], so to solve for x it
     suffices to invert [M] and multiply with [y].
+
+    Related concepts: finite difference method, Lagrange interpolation.
 *)
 
 open Core
