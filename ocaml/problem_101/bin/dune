@@ -1,0 +1,4 @@
+(executable
+ (public_name problem_101)
+ (name main)
+ (libraries problem_101 core lacaml))
