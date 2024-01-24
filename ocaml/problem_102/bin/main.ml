@@ -1,21 +1,21 @@
-(** To check whether a given point [(a, b)] is within a triangle [t =
-    <p₁, p₂, p₃>], it suffices to compute the barycentric coordinates
-    [s, t, 1-s-t] of [(a, b)] wrt. [t] (expressing the point as a
-    linear mixture of the triangle's points [(a, b) = s * p₁ + t * p₂
-    + (1-s-t) * p₃]), and check that they are between [0] and [1]. We
-    solve for the barycentric coordinates via the following equations
-    derived from the equality above:
+(** To check whether a given point [p] is within a triangle [t = <p₁,
+    p₂, p₃>], it suffices to compute the barycentric coordinates [s,
+    t, 1-s-t] of [p] wrt. [t] (expressing the point as a linear
+    mixture of the triangle's points [p = s * p₁ + t * p₂ + (1-s-t) *
+    p₃]), and check that they are between [0] and [1]. We solve for
+    the barycentric coordinates via the following equations derived
+    from the equality above:
 
-    [a = s * p₁.x + t * p₂.x + (1-s-t)*p₃.x]
-<-> [(p₁.x - p₃.x) * s + (p₂.x - p₃.x) * t = a - p₃.x]
+    [p.x = s * p₁.x + t * p₂.x + (1-s-t)*p₃.x]
+<-> [(p₁.x - p₃.x) * s + (p₂.x - p₃.x) * t = p.x - p₃.x]
 
-    [a = s * p₁.y + t * p₂.y + (1-s-t)*p₃.y]
-<-> [(p₁.y - p₃.y) * s + (p₂.y - p₃.y) * t = a - p₃.y]
+    [p.y = s * p₁.y + t * p₂.y + (1-s-t)*p₃.y]
+<-> [(p₁.y - p₃.y) * s + (p₂.y - p₃.y) * t = p.y - p₃.y]
 
     so we have the following matrix equation:
 
-    [p₁.x-p₃.x  p₂.x-p₃.x]   [s]   [a - p₃.x]
-    [p₁.y-p₃.y  p₂.y-p₃.y] × [t] = [b - p₃.y]
+    [p₁.x-p₃.x  p₂.x-p₃.x]   [s]   [p.x - p₃.x]
+    [p₁.y-p₃.y  p₂.y-p₃.y] × [t] = [p.y - p₃.y]
 
     which we can easily solve using lacaml.
 *)
