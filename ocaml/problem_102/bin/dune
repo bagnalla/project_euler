@@ -1,0 +1,5 @@
+(executable
+ (public_name problem_102)
+ (name main)
+ (libraries problem_102 core lacaml)
+ (preprocess (pps ppx_sexp_conv)))

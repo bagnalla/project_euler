@@ -14,7 +14,7 @@
     use a linear algebra library (lacaml) to solve for [a] and [b] in:
 
     [1 1]   [a]   [1]
-    [2 1] x [b] = [8]
+    [2 1] × [b] = [8]
 
     which gives the unique solution [a = 7] and [b = -6], so we have
     [OP(1, n) = 7n - 6].
@@ -29,7 +29,7 @@
 
     [1 1 1]   [a]   [1]
     [4 2 1]   [b]   [8]
-    [9 3 1] x [c] = [27]
+    [9 3 1] × [c] = [27]
 
     yielding [a = 6], [b = -11], and [c = 6], so we have
     [OP(2, n) = 6n² - 11n + 6].
