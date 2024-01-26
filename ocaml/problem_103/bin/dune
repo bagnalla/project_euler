@@ -1,0 +1,5 @@
+(executable
+ (public_name problem_103)
+ (name main)
+ (libraries problem_103 core lp lp-glpk)
+ (preprocess (pps ppx_sexp_conv ppx_deriving.map)))

@@ -8,13 +8,13 @@
 
 open Core
 
-(** Type of arithmetic expressions involving integers. *)
+(** Type of arithmetic expressions containing integers. *)
 type exp =
-  | Num of int
-  | Plus of exp * exp
+  | Num   of int
+  | Plus  of exp * exp
   | Minus of exp * exp
-  | Mult of exp * exp
-  | Div of exp * exp [@@deriving sexp]
+  | Mult  of exp * exp
+  | Div   of exp * exp
 
 open Option.Applicative_infix
 let (let*) = Option.Let_syntax.(>>=)
@@ -31,26 +31,26 @@ let rec eval : exp -> float option = function
                       let* n2 = eval e2 in
                       if Float.( <> ) n2 0.0 then Some (n1 /. n2) else None
 
-(** All k-combinations from given set s. *)
+(** All [k]-combinations from set [s]. *)
 let rec choose (k : int) (s : ('a, 'comp) Set.t) : (('a, 'comp) Set.t) list =
   if k <= 0 then [Set.empty (Set.comparator_s s)] else
     if Set.is_empty s then [] else
       Set.fold s ~init:[] ~f:(fun acc x ->
           acc @ List.map ~f:(fun s -> Set.add s x)
-                  ((choose (k-1) (Set.filter s ~f:(fun y -> y > x)))))
+                  (choose (k-1) (Set.filter s ~f:(fun y -> y > x))))
 
-module IntSet = Core.Set.Make(Int)
+module IntSet = Set.Make(Int)
 
 (* let to_string : IntSet.t -> string = Fn.compose Sexp.to_string IntSet.sexp_of_t *)
 
-(** Cartesian product of two sets. *)
-let cartesian l l' = 
-  List.concat (List.map ~f:(fun e -> List.map ~f:(fun e' -> (e,e')) l') l)
+(** Cartesian product of lists [a] and [b]. *)
+let cartesian a b = 
+  List.concat (List.map ~f:(fun x -> List.map ~f:(fun y -> (x, y)) b) a)
 
 open List.Monad_infix
 
 (** Generate a list of all possible expressions that contain each
-    integer from the given set [s] exactly once. *)
+    integer from set [s] exactly once. *)
 let rec gen (s : IntSet.t) : exp list =
   if Set.length s = 1 then
     [Num (Set.choose_exn s)]
