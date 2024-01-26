@@ -38,7 +38,8 @@
     choose a value of [z] to make the constraints satisfiable only
     when [a ≠ b]. We define [C] as follows:
 
-    [1 ≤ a - b + z * m ≤ m - 1], where m is an upper bound on [|a-b|].
+    [1 ≤ a - b + z * m ≤ m - 1], where m is some sufficiently large
+    integer (an upper bound on [|a-b|] -- we choose [m=1000]).
 
     When [a < b], the solver can choose [z=1] to make:
     [1 ≤ a - b + m ≤ m - 1] ⇔ [1 - m ≤ a - b ≤ -1],
@@ -53,6 +54,11 @@
     [m ≤ m - 1] is false.
 
     This solution runs in about 2 seconds in my Linux VM.
+
+    EDIT: After doing problem 106 I see that we can avoid checking for
+    equality when [Uᵢ < Vᵢ] or [Vᵢ < Uᵢ] for every [i] (since [U] and
+    [V] are sorted) every [i ∈ U]. This cuts the running time down to
+    about 1.5s.
 
     A possible other solution is based on the observation that every
     subset of an SSS is also an SSS, thus it should suffice to build
@@ -110,21 +116,28 @@ let gensym (s : string) : string =
   gensym_counter := !gensym_counter + 1;
   x
 
-(** Generate constraints corresponding to given non-empty disjoint
-    sets of variables [a] and [b]. *)
-let constrs_of_subset_pair (a : Poly.t list) (b : Poly.t list) : Cnstr.t list =
-  let sum_a = poly_sum a in
-  let sum_b = poly_sum b in
+let constrs_of_subset_pair (vars : int -> Poly.t) (a : int list) (b : int list) : Cnstr.t list =
+  let sum_a = poly_sum @@ List.map a ~f:vars in
+  let sum_b = poly_sum @@ List.map b ~f:vars in
   if List.length b - List.length a = 1 then
     [sum_a <~ sum_b -- one]
   else if List.length a - List.length b = 1 then
     [sum_b <~ sum_a -- one]
   else if List.length a = List.length b then
-    let z = binary @@ gensym "z" in
-    let m = c 1000.0 in
-    let e = sum_a -- sum_b ++ m *~ z in
-    [e >~ one;
-     e <~ m -- one]
+    (* If each index [i ∈ a] has a corresponding index [j ∈ b] such
+       that [i < j], then we should have [sum_a < sum_b] (because the
+       variables are ordered such that [xᵢ < xⱼ] when [i < j]. *)
+    if List.for_all (List.zip_exn a b) ~f:(fun (i, j) -> i < j) then
+      [sum_a <~ sum_b -- one]
+    (* Symmetric case. *)
+    else if List.for_all (List.zip_exn b a) ~f:(fun (i, j) -> i < j) then
+      [sum_b <~ sum_a -- one]
+    (* Otherwise we have to compare for equality :(. *)
+    else
+      let z = binary @@ gensym "z" in
+      let m = c 1000.0 in
+      let e = sum_a -- sum_b ++ m *~ z in
+      [e >~ one; e <~ m -- one]
   else
     []
 
@@ -133,17 +146,15 @@ let () =
   let ixs = List.init n ~f:Fn.id in
   let ix_subset_pairs = disjoint_subsets @@ IntSet.of_list ixs in
   let vars = List.map ixs ~f:(fun i -> var ("x" ^ string_of_int i) ~integer:true) in
-  let var_subset_pairs = List.map ix_subset_pairs ~f:(fun (a, b) ->
-                             (List.map (Set.to_list a) ~f:(List.nth_exn vars),
-                              List.map (Set.to_list b) ~f:(List.nth_exn vars))) in
   let objective = minimize @@ poly_sum vars in
 
   (* Enforce strict ordering on the variables and then the constraints
      imposed by subset sum relationships. *)
   let constrs = List.init (n-1) ~f:(fun i ->
                     List.nth_exn vars i <~ List.nth_exn vars (i+1) -- one) @
-                  List.concat_map var_subset_pairs ~f:(fun (a, b) ->
-                      constrs_of_subset_pair a b) in
+                  List.concat_map ix_subset_pairs ~f:(fun (a, b) ->
+                      constrs_of_subset_pair (fun i -> List.nth_exn vars i)
+                        (Set.to_list a) (Set.to_list b)) in
   let problem = make objective constrs in
   
   if validate problem then
