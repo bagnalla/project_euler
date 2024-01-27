@@ -1,0 +1,4 @@
+(executable
+ (public_name problem_107)
+ (name main)
+ (libraries problem_107 core ocamlgraph))
