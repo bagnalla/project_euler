@@ -1,5 +1,5 @@
 // The code for this one is confusing but very fast and generalized to
-// work for any S(n, d). Runs in about 33ms in my Linux VM. The idea
+// work for any S(n, d). Runs in about 32ms in my Linux VM. The idea
 // is fairly simple:
 
 // Say we want to compute S(10, 1), i.e., the sum of the 10-digit
@@ -28,9 +28,11 @@
 // (and there are 39 such primes).
 
 // That's basically it, but the code for generating all the
-// possibilities is a little complicated. Only M(10, 0), M(10, 2) and
-// M(10, 8) are equal to 8, and the rest (M(10, d) for d ∉ {0, 2, 8})
-// are equal to 9.
+// possibilities is a little complicated (partly out of a desire to
+// avoid creating a bunch of copies of strings/vectors, and also
+// because we implement everything from scratch). Only M(10, 0), M(10,
+// 2) and M(10, 8) are equal to 8, and the rest (M(10, d) for d ∉ {0,
+// 2, 8}) are equal to 9.
 
 #include <cmath>
 #include <iostream>
@@ -78,7 +80,7 @@ vector<vector<uint>> indices(uint lb, uint ub, uint n) {
 // Given an initial string [s] (e.g., "1111111111", "2222222222") and
 // set of indices [ixs], try replacing characters in [s] at indices in
 // ixs[j] for [j >= i] with all possible digits and produce a vector
-// of all the primes found from this process.
+// of all the primes found during this process.
 vector<ulong> find_primes_with_ixs_replaced(string &s, const vector<uint> &ixs, uint i) {
   if (i == ixs.size()) {
     ulong n = stoull(s);
