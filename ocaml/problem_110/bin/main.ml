@@ -20,8 +20,7 @@
     given [n] by exploiting the formula given at
     https://oeis.org/A018892 in terms of the prime factorization of
     [n]. This is convenient for us because we're generating [n] from
-    its prime factors to begin with.
-*)
+    its prime factors to begin with. *)
 
 open Core
 open Z
