@@ -13,10 +13,10 @@ module Cache = Map.Make(struct type t = int * int [@@deriving sexp, compare] end
 
 let cache : int Cache.t ref = ref Cache.empty
 
-(** [f k n] is the number of number of ways a row of length [n] can be
-    filled with tiles of length [k], PLUS ONE. The "plus one" is
-    useful for the induction, but it means that you must subtract one
-    from the final result to get the right answer. *)
+(** [f k n] is the number of ways a row of length [n] can be filled
+    with tiles of length [k], PLUS ONE. The "plus one" is useful for
+    the induction, but it means that you must subtract one from the
+    final result to get the right answer. *)
 let rec f (k : int) (n : int) : int =
   match Map.find !cache (k, n) with
   | Some m -> m
