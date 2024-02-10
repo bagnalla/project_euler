@@ -42,6 +42,9 @@
 // are counting the number of non-bouncy numbers less than 10^n, so
 // for n=100 we must subtract 900 from the final count.
 
+// It's actually possible to give a closed formula for the answer
+// using binomial coefficients but I'm happy enough with this.
+
 // Runs in about 4ms in my Linux VM.
 
 #include <iostream>
