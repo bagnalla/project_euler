@@ -15,7 +15,7 @@ module Cache = Map.Make(struct type t = int * int [@@deriving sexp, compare] end
 let cache : int Cache.t ref = ref Cache.empty
 
 let rec g (m : int) (n : int) (k : int) : int =
-  1 +  List.fold (range (k+1) (n+1)) ~init:0 ~f:(fun acc i -> acc + f m (n - i))
+  1 + List.fold (range (k+1) (n+1)) ~init:0 ~f:(fun acc i -> acc + f m (n - i))
 
 and f (m : int) (n : int) : int =
   match Map.find !cache (m, n) with
