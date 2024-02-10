@@ -1,8 +1,8 @@
 (** Simple memoized recursive solution (a pair a mutually recursive
     functions).
 
-    [g n k] is the number of number of blocks of size k that can be
-    placed in a row of size n.
+    [g n k] is the number of blocks of size k that can be placed in a
+    row of size n.
 
     [f n] is the total number of blocks that can be placed in a row of
     size n.
@@ -15,17 +15,18 @@
 
 open Core
 
+(** List of integers from [low] (inclusive) to [high] (exclusive). *)
 let range (low : int) (high : int) : int list =
   if high <= low then [] else
     List.init (high - low) ~f:(fun n -> n + low)
 
+(** Maps with integer keys. *)
 module Cache = Map.Make(Int)
 
 let cache : int Cache.t ref = ref Cache.empty
 
 let rec g (n : int) (k : int) : int =
-  1 + 
-    List.fold (range (k+1) (n+1)) ~init:0 ~f:(fun acc i -> acc + f (n - i))
+  1 + List.fold (range (k+1) (n+1)) ~init:0 ~f:(fun acc i -> acc + f (n - i))
 
 and f (n : int) : int =
   match Map.find !cache n with
