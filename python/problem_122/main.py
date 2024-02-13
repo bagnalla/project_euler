@@ -20,7 +20,9 @@
 # variables xⱼ and xₖ for j < i and k < i.
 
 # And finally, assert that the last variable is equal to the target
-# exponent value.
+# exponent value. If the resulting context is satisfiable then we're
+# done, otherwise we have to undo the last assertion and add another
+# variable and try again.
 
 # Runs in about 30s in my Linux VM.
 
@@ -29,47 +31,39 @@ from typing import Optional
 from yices import Config, Context, Model, Status, Types, Terms
 Term = int # Make typechecker happy.
 
-# Try to solve for the number of ways to raise a base to the [target]
-# power using [n] multiplications.
-def try_to_solve(target: int, n: int) -> Optional[list[int]]:
-    if n < 1:
-        return None
-    
-    yices_ctx: Context = Context(Config()) # Yices context.
+# Solve for the number of ways to raise a base to the [target] power.
+def solve(target: int) -> list[int]:
+    if target == 1:
+        return [1]
+
+    cfg = Config()
+    yices_ctx: Context = Context(cfg) # Yices context.
     env: dict[str, Term] = {}              # Map names to Yices terms.
 
-    for i in range(n):
-        name = "x%d" % i
-        env[name] = Terms.new_uninterpreted_term(Types.int_type(), name)
-
+    env["x0"] = Terms.new_uninterpreted_term(Types.int_type(), "x0")
     yices_ctx.assert_formula(Terms.eq(env["x0"], Terms.integer(1)))
-    if n > 1: # Small optimization.
-        yices_ctx.assert_formula(Terms.eq(env["x1"], Terms.integer(2)))
 
-    for i in range(2, n):
+    n = 1
+    while True:
+        name = "x%d" % n
+        env[name] = Terms.new_uninterpreted_term(Types.int_type(), name)
+        
         l = []
-        for j in range(0, i):
-            for k in range(j, i):
-                l.append(Terms.eq(env["x%d" % i],
+        for j in range(0, n):
+            for k in range(j, n):
+                l.append(Terms.eq(env["x%d" % n],
                                   Terms.add(env["x%d" % j], env["x%d" % k])))
         yices_ctx.assert_formula(Terms.yor(l))
 
-    yices_ctx.assert_formula(Terms.eq(env["x%d" % (n-1)], Terms.integer(target)))
+        yices_ctx.push()
+        yices_ctx.assert_formula(Terms.eq(env["x%d" % n], Terms.integer(target)))
 
-    if yices_ctx.check_context() == Status.SAT:
-        model = Model.from_context(yices_ctx, 1)
-        return [model.get_integer_value(term) for term in env.values()]
-    else:
-        return None
-
-# Keep trying to solve with increasing values of n until succeeding.
-def solve(target: int) -> list[int]:
-    n = 1
-    l = try_to_solve(target, n)
-    while l is None:
-        n += 1
-        l = try_to_solve(target, n)
-    return l
+        if yices_ctx.check_context() == Status.SAT:
+            model = Model.from_context(yices_ctx, 1)
+            return [model.get_integer_value(term) for term in env.values()]
+        else:
+            yices_ctx.pop()
+            n += 1
 
 sum = 0
 for i in range(1, 201):
