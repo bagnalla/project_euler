@@ -26,12 +26,11 @@
 
 # Runs in about 30s in my Linux VM.
 
-from dataclasses import dataclass
-from typing import Optional
 from yices import Config, Context, Model, Status, Types, Terms
 Term = int # Make typechecker happy.
 
-# Find m(k).
+# Solve for the powers of n appearing in a minimal (not necessarily
+# unique) calculation of n^k. m(k) = len(solve(k))-1.
 def solve(k: int) -> list[int]:
     if k == 1:
         return [1]
@@ -43,29 +42,26 @@ def solve(k: int) -> list[int]:
     env["x0"] = Terms.new_uninterpreted_term(Types.int_type(), "x0")
     yices_ctx.assert_formula(Terms.eq(env["x0"], Terms.integer(1)))
 
-    n = 1
+    i = 1
     while True:
-        name = "x%d" % n
+        name = "x%d" % i
         env[name] = Terms.new_uninterpreted_term(Types.int_type(), name)
         
         l = []
-        for i in range(0, n):
-            for j in range(i, n):
-                l.append(Terms.eq(env["x%d" % n],
-                                  Terms.add(env["x%d" % i], env["x%d" % j])))
+        for a in range(0, i):
+            for b in range(a, i):
+                l.append(Terms.eq(env["x%d" % i],
+                                  Terms.add(env["x%d" % a], env["x%d" % b])))
         yices_ctx.assert_formula(Terms.yor(l))
 
         yices_ctx.push()
-        yices_ctx.assert_formula(Terms.eq(env["x%d" % n], Terms.integer(k)))
+        yices_ctx.assert_formula(Terms.eq(env["x%d" % i], Terms.integer(k)))
 
         if yices_ctx.check_context() == Status.SAT:
             model = Model.from_context(yices_ctx, 1)
             return [model.get_integer_value(term) for term in env.values()]
         else:
             yices_ctx.pop()
-            n += 1
+            i += 1
 
-sum = 0
-for i in range(1, 201):
-    sum += len(solve(i)) - 1
-print(sum)
+print(sum(len(solve(k)) - 1 for k in range(1, 201)))

@@ -12,12 +12,12 @@
     combinations with 3 blues and 1 red, and [4 choose 4 = 1]
     combinations with 4 blues. The same approach can be applied to the
     larger problem, with [15 choose 8] ways to win with 8 blues, [15
-    choose 9] ways to win with 9 blues, etc. We simply enumerate them
-    all and add up their probabilities to obtain the total probability
-    [p] of the player winning, and then look at [1/p] to get the
-    maximum prize the banker should allot.
+    choose 9] ways to win with 9 blues, etc. We simply enumerate all
+    of the combinations and add up their probabilities to obtain the
+    total probability [p] of the player winning, and then look at
+    [1/p] to get the maximum prize the banker should allot.
 
-    Runs in about 190ms in my Linux VM.
+    Runs in about 75ms on my machine.
 *)
 
 open Core
