@@ -31,14 +31,14 @@ from typing import Optional
 from yices import Config, Context, Model, Status, Types, Terms
 Term = int # Make typechecker happy.
 
-# Solve for the number of ways to raise a base to the [target] power.
-def solve(target: int) -> list[int]:
-    if target == 1:
+# Find m(k).
+def solve(k: int) -> list[int]:
+    if k == 1:
         return [1]
 
     cfg = Config()
     yices_ctx: Context = Context(cfg) # Yices context.
-    env: dict[str, Term] = {}              # Map names to Yices terms.
+    env: dict[str, Term] = {}         # Map names to Yices terms.
 
     env["x0"] = Terms.new_uninterpreted_term(Types.int_type(), "x0")
     yices_ctx.assert_formula(Terms.eq(env["x0"], Terms.integer(1)))
@@ -49,14 +49,14 @@ def solve(target: int) -> list[int]:
         env[name] = Terms.new_uninterpreted_term(Types.int_type(), name)
         
         l = []
-        for j in range(0, n):
-            for k in range(j, n):
+        for i in range(0, n):
+            for j in range(i, n):
                 l.append(Terms.eq(env["x%d" % n],
-                                  Terms.add(env["x%d" % j], env["x%d" % k])))
+                                  Terms.add(env["x%d" % i], env["x%d" % j])))
         yices_ctx.assert_formula(Terms.yor(l))
 
         yices_ctx.push()
-        yices_ctx.assert_formula(Terms.eq(env["x%d" % n], Terms.integer(target)))
+        yices_ctx.assert_formula(Terms.eq(env["x%d" % n], Terms.integer(k)))
 
         if yices_ctx.check_context() == Status.SAT:
             model = Model.from_context(yices_ctx, 1)
