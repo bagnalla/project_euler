@@ -21,7 +21,7 @@ constexpr bool isPrime(uint n) {
   return n > 1;
 }
 
-static vector<uint> primes;
+vector<uint> primes;
 
 void init_primes() {
   primes.push_back(2);
@@ -32,7 +32,7 @@ void init_primes() {
   }
 }
 
-static vector<vector<uint>> prime_factors(N+1, vector<uint>{});
+vector<vector<uint>> prime_factors(N+1, vector<uint>{});
 
 // This could probably be optimized but it's good enough as is.
 void init_prime_factors() {
