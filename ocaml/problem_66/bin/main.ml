@@ -34,7 +34,7 @@ let is_square (n : Z.t) : bool =
 let rec zeros () : Z.t stream = scons Z.zero zeros
 
 (* Generate the sequence of integers in the continued fraction
-   representation of [n].*)
+   representation of [sqrt(n)].*)
 let sqrt_continued_fraction (n : Z.t) : Z.t stream =
   if is_square n then scons (Z.sqrt n) zeros else
     let a0 = Z.sqrt n in

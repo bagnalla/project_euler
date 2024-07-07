@@ -6,6 +6,8 @@
 // fact that rad(a*b*c) = rad(a)*rad(b)*rad(c) when a, b, and c are
 // coprime.
 
+// Runs in about 2.5s in my Linux VM.
+
 #include <cmath>
 #include <iostream>
 #include <vector>
